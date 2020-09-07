@@ -2,14 +2,14 @@ all: build
 
 FLAGS =
 ENVVAR = GOOS=linux GOARCH=amd64 CGO_ENABLED=0
-REGISTRY = pub.domeos.org
-TAG = v0.1.0
+REGISTRY = registry.bizsaas.net
+TAG = v0.2.0
 
 deps:
 	go get github.com/tools/godep
 
 build: clean deps
-	$(ENVVAR) godep go build -o kube_event_watcher 
+	$(ENVVAR) godep  go build -o kube_event_watcher
 
 test-unit: clean deps build
 	$(ENVVAR) godep go test --race . $(FLAGS)

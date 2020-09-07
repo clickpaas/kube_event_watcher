@@ -17,26 +17,23 @@ limitations under the License.
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"github.com/openshift/origin/pkg/util/proc"
+	flag "github.com/spf13/pflag"
 	"io/ioutil"
+	"k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/fields"
+	"k8s.io/apimachinery/pkg/util/wait"
+	clientset "k8s.io/client-go/kubernetes"
+	restclient "k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/cache"
+	"k8s.io/client-go/tools/clientcmd"
 	"log"
 	"net/http"
 	"os"
 	"time"
-
-	"encoding/json"
-
-	"bytes"
-
-	"github.com/openshift/origin/pkg/util/proc"
-	flag "github.com/spf13/pflag"
-	clientset "k8s.io/client-go/1.5/kubernetes"
-	"k8s.io/client-go/1.5/pkg/api"
-	"k8s.io/client-go/1.5/pkg/api/v1"
-	"k8s.io/client-go/1.5/pkg/util/wait"
-	restclient "k8s.io/client-go/1.5/rest"
-	"k8s.io/client-go/1.5/tools/cache"
-	"k8s.io/client-go/1.5/tools/clientcmd"
 )
 
 const (
@@ -237,10 +234,11 @@ func reportEvent(url string, de DomeosEvent) {
 // initializeMetricCollection creates and starts informers and initializes and
 // registers metrics for collection.
 func initializeMetricCollection(kubeClient clientset.Interface) {
-	cclient := kubeClient.Core().GetRESTClient()
-	elw := cache.NewListWatchFromClient(cclient, "events", api.NamespaceAll, nil)
+	cclient := kubeClient.CoreV1().RESTClient()
+	elw := cache.NewListWatchFromClient(cclient, "events", v1.NamespaceAll, fields.Everything())
 	ec := &eventController{}
-	_, einf := cache.NewInformer(elw,
+	_, einf := cache.NewInformer(
+		elw,
 		&v1.Event{},
 		resyncPeriod,
 		cache.ResourceEventHandlerFuncs{
