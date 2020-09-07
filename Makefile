@@ -6,13 +6,13 @@ REGISTRY = registry.bizsaas.net
 TAG = v0.2.0
 
 deps:
-	go get github.com/tools/godep
+	go mod tidy
 
 build: clean deps
-	$(ENVVAR) godep  go build -o kube_event_watcher
+	$(ENVVAR) go build -o kube_event_watcher
 
 test-unit: clean deps build
-	$(ENVVAR) godep go test --race . $(FLAGS)
+	$(ENVVAR) go test --race . $(FLAGS)
 
 container: build
 	docker build -t ${REGISTRY}/kube_event_watcher:$(TAG) .

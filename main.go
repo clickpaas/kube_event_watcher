@@ -160,7 +160,10 @@ type eventController struct {
 
 func (*eventController) addEvent(obj interface{}) {
 	if obj != nil {
-		event := obj.(*v1.Event)
+		event,ok := obj.(*v1.Event)
+		if (!ok) {
+			return;
+		}
 		reportEvent(*domeosServer, DomeosEvent{
 			K8sEvent:   *event,
 			ClusterId:  *clusterId,
@@ -172,7 +175,10 @@ func (*eventController) addEvent(obj interface{}) {
 
 func (*eventController) updateEvent(old, cur interface{}) {
 	if cur != nil {
-		event := cur.(*v1.Event)
+		event ,ok:= cur.(*v1.Event)
+		if (!ok) {
+			return;
+		}
 		reportEvent(*domeosServer, DomeosEvent{
 			K8sEvent:   *event,
 			ClusterId:  *clusterId,
@@ -184,7 +190,10 @@ func (*eventController) updateEvent(old, cur interface{}) {
 
 func (*eventController) deleteEvent(obj interface{}) {
 	if obj != nil {
-		event := obj.(*v1.Event)
+		event, ok := obj.(*v1.Event)
+		if (!ok) {
+			return;
+		}
 		reportEvent(*domeosServer, DomeosEvent{
 			K8sEvent:   *event,
 			ClusterId:  *clusterId,
