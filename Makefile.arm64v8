@@ -1,0 +1,10 @@
+all: build
+
+build:
+	GOOS=linux GOARCH=arm64  go build -o  kube_event_watcher.arm64v8 ;\
+	docker buildx build --platform linux/arm64 --pull -t registry.bizsaas.net/arm64v8/kube_event_watcher:v0.2.0 -f Dockerfile.arm64v8 .
+
+push:
+	docker push registry.bizsaas.net/arm64v8/kube_event_watcher:v0.2.0
+
+.PHONY: all build push

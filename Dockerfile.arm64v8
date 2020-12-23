@@ -1,0 +1,12 @@
+FROM arm64v8/alpine:3.9
+
+RUN apk add --no-cache bash && \ 
+    apk add --no-cache ca-certificates && \ 
+    apk add --no-cache tzdata && \
+    ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+COPY kube_event_watcher.arm64v8 /kube_event_watcher
+VOLUME /tmp
+
+ENTRYPOINT ["/kube_event_watcher"]
+
+EXPOSE 80 8080
