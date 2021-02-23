@@ -47,6 +47,8 @@ var (
 
 	apiserver = flags.String("apiserver", "", `The URL of the apiserver to use as a master`)
 
+	token = flags.String("token", "", `The token of the apiserver`)
+
 	kubeconfig = flags.String("kubeconfig", "./config", "absolute path to the kubeconfig file")
 
 	help = flags.BoolP("help", "h", false, "Print help text")
@@ -78,6 +80,8 @@ func main() {
 		log.Fatal("--apiserver not set and --in-cluster is false; apiserver must be set to a valid URL")
 	}
 	log.Println("apiServer set to: %v", *apiserver)
+
+	log.Println("token set to: %v", *token)
 
 	proc.StartReaper()
 
@@ -125,6 +129,10 @@ func createKubeClient() (kubeClient clientset.Interface, err error) {
 		}
 		// add host here
 		config.Host = *apiserver
+		if *token != "" {
+			config.BearerToken = *token
+			config.TLSClientConfig = restclient.TLSClientConfig{Insecure: true}
+		}
 		kubeClient, err = clientset.NewForConfig(config)
 		if err != nil {
 			return nil, err
@@ -135,9 +143,11 @@ func createKubeClient() (kubeClient clientset.Interface, err error) {
 	// can't reach the server, making debugging hard. This makes it easier to
 	// figure out if apiserver is configured incorrectly.
 	log.Println("testing communication with server")
-	_, err = kubeClient.Discovery().ServerVersion()
+	serverVersion, err := kubeClient.Discovery().ServerVersion()
 	if err != nil {
 		return nil, fmt.Errorf("ERROR communicating with apiserver: %v", err)
+	} else {
+		log.Printf("serverVersion: %v", serverVersion)
 	}
 
 	return kubeClient, nil
