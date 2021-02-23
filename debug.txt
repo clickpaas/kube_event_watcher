@@ -1,0 +1,16 @@
+https config:
+============================================================
+--apiserver=172.37.100.71:6443
+--in-cluster=false
+--port=8080
+--clusterId=2
+--domeosServer=http://172.37.100.41:8089/api/k8sevent/report
+--token=xx.xx.d-xx-xx-xx-xx-xx-xx
+
+http config:
+============================================================
+--apiserver=172.35.88.71:8080
+--in-cluster=false
+--port=8080
+--clusterId=2
+--domeosServer=http://172.35.66.146:8091/api/k8sevent/report
